@@ -887,50 +887,50 @@
      آپلود به Catbox
      ═══════════════════════════════════════════════════════ */
   function uploadFile(file, onProgress) {
+  function uploadFile(file, onProgress) {
     return new Promise((resolve, reject) => {
-      if (!file.type.startsWith('image/')) {
-        reject(new Error('فقط فایل تصویری مجازه'));
-        return;
-      }
-      if (file.size > MAX_SIZE) {
-        reject(new Error('حجم فایل بیشتر از ۲۰۰ مگابایته'));
-        return;
-      }
+        // دریافت UID و Token از کاربر (در localStorage ذخیره کنید)
+        const UID = localStorage.getItem('imgurl_uid');
+        const TOKEN = localStorage.getItem('imgurl_token');
 
-      const fd = new FormData();
-      fd.append('reqtype', 'fileupload');
-      fd.append('fileToUpload', file);
-
-      const xhr = new XMLHttpRequest();
-      xhr.open('POST', 'https://catbox.moe/user/api.php', true);
-
-      xhr.upload.addEventListener('progress', (e) => {
-        if (e.lengthComputable) {
-          onProgress(e.loaded / e.total);
+        if (!UID || !TOKEN) {
+            reject(new Error('برای آپلود، ابتدا باید UID و Token خود را در تنظیمات وارد کنید'));
+            return;
         }
-      });
 
-      xhr.addEventListener('load', () => {
-        if (xhr.status >= 200 && xhr.status < 300) {
-          const url = xhr.responseText.trim();
-          if (url.startsWith('https://')) resolve(url);
-          else reject(new Error('پاسخ نامعتبر از سرور: ' + url.slice(0, 100)));
-        } else {
-          reject(new Error('خطای سرور (' + xhr.status + ')'));
-        }
-      });
+        const fd = new FormData();
+        fd.append('uid', UID);
+        fd.append('token', TOKEN);
+        fd.append('file', file);
 
-      xhr.addEventListener('error', () => {
-        reject(new Error('اتصال به سرور برقرار نشد'));
-      });
+        const xhr = new XMLHttpRequest();
+        // آدرس API نسخه ۲ یا ۳ را استفاده کنید
+        xhr.open('POST', 'https://www.imgurl.org/api/v2/upload', true);
+        // افزودن هدر Authorization
+        xhr.setRequestHeader('Authorization', 'Bearer ' + TOKEN);
 
-      xhr.addEventListener('timeout', () => {
-        reject(new Error('زمان آپلود تموم شد'));
-      });
+        xhr.upload.addEventListener('progress', (e) => {
+            if (e.lengthComputable) onProgress(e.loaded / e.total);
+        });
 
-      xhr.send(fd);
+        xhr.addEventListener('load', () => {
+            if (xhr.status >= 200 && xhr.status < 300) {
+                try {
+                    const res = JSON.parse(xhr.responseText);
+                    // مسیر URL در پاسخ ممکن است data.url یا url باشد
+                    resolve(res.data.url || res.url);
+                } catch (e) {
+                    reject(new Error('پاسخ نامعتبر از سرور'));
+                }
+            } else {
+                reject(new Error('خطای سرور (' + xhr.status + ')'));
+            }
+        });
+
+        xhr.addEventListener('error', () => reject(new Error('اتصال برقرار نشد')));
+        xhr.send(fd);
     });
-  }
+}
 
   /* ═══════════════════════════════════════════════════════
      مدیریت آپلود
