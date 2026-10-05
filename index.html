@@ -1,0 +1,1131 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="color-scheme" content="dark">
+<meta name="theme-color" content="#0a0a14">
+<title>فایل‌بان — آپلود سریع تصویر</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect x='20' y='20' width='60' height='60' rx='14' fill='none' stroke='%23d9a441' stroke-width='7'/%3E%3Cpath d='M35 60l12-14 12 16 8-9 8 12H35z' fill='%23d9a441'/%3E%3Ccircle cx='40' cy='38' r='5' fill='%23d9a441'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" media="print" onload="this.media='all'"
+  href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@200;300;400;500;700;900&family=JetBrains+Mono:wght@300;400;500&display=swap">
+<noscript>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@200;300;400;500;700;900&family=JetBrains+Mono:wght@300;400;500&display=swap">
+</noscript>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body {
+    min-height: 100%;
+    background: #0a0a14;
+    color: #e8e2d4;
+    font-family: 'Vazirmatn', Tahoma, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    overflow-x: hidden;
+    line-height: 1.7;
+  }
+  body {
+    background:
+      radial-gradient(ellipse 80% 60% at 50% -10%, rgba(217, 164, 65, 0.09), transparent 60%),
+      radial-gradient(ellipse 60% 50% at 90% 100%, rgba(107, 126, 178, 0.06), transparent 60%),
+      #0a0a14;
+    min-height: 100vh;
+    min-height: 100dvh;
+    padding-bottom: 60px;
+  }
+
+  ::selection { background: rgba(217, 164, 65, 0.3); color: #fff; }
+
+  /* ═══════ هدر ═══════ */
+  .header {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 40px 20px 20px;
+    text-align: center;
+  }
+  .brand {
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 20px;
+  }
+  .brand-mark {
+    width: 44px;
+    height: 44px;
+    border-radius: 12px;
+    display: grid;
+    place-items: center;
+    background: linear-gradient(135deg, #d9a441, #b8862a);
+    color: #0a0a14;
+    box-shadow: 0 8px 24px rgba(217, 164, 65, 0.35);
+  }
+  .brand-mark svg { width: 22px; height: 22px; }
+  .brand-text {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    font-weight: 500;
+    letter-spacing: 0.3em;
+    color: rgba(217, 164, 65, 0.75);
+    text-transform: uppercase;
+  }
+  .header h1 {
+    font-size: clamp(28px, 5vw, 42px);
+    font-weight: 900;
+    line-height: 1.2;
+    letter-spacing: -0.02em;
+    background: linear-gradient(135deg, #ffffff 0%, #e8e2d4 40%, #d9a441 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    margin-bottom: 12px;
+  }
+  .header p {
+    font-size: clamp(13px, 2vw, 15px);
+    color: rgba(232, 226, 212, 0.55);
+    max-width: 520px;
+    margin: 0 auto;
+    line-height: 1.9;
+  }
+
+  /* ═══════ کارت اصلی ═══════ */
+  .container {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 0 20px;
+  }
+
+  .uploader {
+    position: relative;
+    margin-top: 36px;
+    background: rgba(20, 20, 32, 0.6);
+    border: 1px solid rgba(232, 226, 212, 0.08);
+    border-radius: 24px;
+    padding: 8px;
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    box-shadow:
+      0 20px 60px rgba(0, 0, 0, 0.4),
+      inset 0 1px 0 rgba(255, 255, 255, 0.04);
+  }
+
+  .drop-zone {
+    position: relative;
+    border: 2px dashed rgba(217, 164, 65, 0.25);
+    border-radius: 18px;
+    padding: 60px 30px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.22, 0.61, 0.36, 1);
+    background: rgba(10, 10, 20, 0.4);
+    overflow: hidden;
+  }
+  .drop-zone::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(circle at 50% 50%, rgba(217, 164, 65, 0.08), transparent 70%);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    pointer-events: none;
+  }
+  .drop-zone:hover {
+    border-color: rgba(217, 164, 65, 0.5);
+    background: rgba(217, 164, 65, 0.02);
+  }
+  .drop-zone:hover::before { opacity: 1; }
+  .drop-zone.dragover {
+    border-color: #d9a441;
+    background: rgba(217, 164, 65, 0.08);
+    transform: scale(1.005);
+  }
+  .drop-zone.dragover::before { opacity: 1; }
+
+  .drop-icon {
+    width: 68px;
+    height: 68px;
+    margin: 0 auto 20px;
+    border-radius: 20px;
+    display: grid;
+    place-items: center;
+    background: linear-gradient(135deg, rgba(217, 164, 65, 0.15), rgba(217, 164, 65, 0.04));
+    border: 1px solid rgba(217, 164, 65, 0.25);
+    color: #d9a441;
+    animation: float 4s ease-in-out infinite;
+  }
+  @keyframes float {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-6px); }
+  }
+  .drop-icon svg { width: 32px; height: 32px; }
+
+  .drop-title {
+    font-size: 18px;
+    font-weight: 700;
+    color: #e8e2d4;
+    margin-bottom: 8px;
+  }
+  .drop-sub {
+    font-size: 13px;
+    color: rgba(232, 226, 212, 0.45);
+    line-height: 1.8;
+  }
+  .drop-sub kbd {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    padding: 2px 8px;
+    background: rgba(232, 226, 212, 0.08);
+    border: 1px solid rgba(232, 226, 212, 0.12);
+    border-radius: 5px;
+    color: rgba(232, 226, 212, 0.7);
+    margin: 0 2px;
+  }
+
+  /* ═══════ پیشرفت آپلود ═══════ */
+  .progress-card {
+    margin-top: 20px;
+    padding: 22px 24px;
+    background: rgba(20, 20, 32, 0.6);
+    border: 1px solid rgba(232, 226, 212, 0.08);
+    border-radius: 20px;
+    display: none;
+    animation: slideUp 0.4s cubic-bezier(0.22, 0.61, 0.36, 1);
+  }
+  .progress-card.on { display: block; }
+  @keyframes slideUp {
+    from { opacity: 0; transform: translateY(12px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  .progress-head {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin-bottom: 16px;
+  }
+  .progress-thumb {
+    width: 48px;
+    height: 48px;
+    border-radius: 12px;
+    object-fit: cover;
+    background: rgba(232, 226, 212, 0.05);
+    flex-shrink: 0;
+    border: 1px solid rgba(232, 226, 212, 0.1);
+  }
+  .progress-info { flex: 1; min-width: 0; }
+  .progress-name {
+    font-size: 13px;
+    font-weight: 600;
+    color: #e8e2d4;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    margin-bottom: 2px;
+  }
+  .progress-size {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: rgba(232, 226, 212, 0.4);
+    direction: ltr;
+  }
+  .progress-pct {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 14px;
+    font-weight: 500;
+    color: #d9a441;
+    flex-shrink: 0;
+    direction: ltr;
+  }
+  .progress-bar {
+    height: 6px;
+    background: rgba(232, 226, 212, 0.06);
+    border-radius: 100px;
+    overflow: hidden;
+    position: relative;
+  }
+  .progress-fill {
+    height: 100%;
+    width: 0%;
+    background: linear-gradient(90deg, #d9a441, #f0c674);
+    border-radius: 100px;
+    transition: width 0.2s ease;
+    box-shadow: 0 0 12px rgba(217, 164, 65, 0.6);
+  }
+  .progress-status {
+    margin-top: 12px;
+    font-size: 12px;
+    color: rgba(232, 226, 212, 0.5);
+    text-align: center;
+  }
+
+  /* ═══════ نتیجه ═══════ */
+  .result-card {
+    margin-top: 20px;
+    padding: 24px;
+    background: linear-gradient(135deg, rgba(217, 164, 65, 0.06), rgba(20, 20, 32, 0.6));
+    border: 1px solid rgba(217, 164, 65, 0.25);
+    border-radius: 20px;
+    display: none;
+    animation: slideUp 0.5s cubic-bezier(0.22, 0.61, 0.36, 1);
+  }
+  .result-card.on { display: block; }
+
+  .result-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 18px;
+    color: #6aab7a;
+    font-weight: 700;
+    font-size: 14px;
+  }
+  .result-check {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background: rgba(106, 171, 122, 0.15);
+    display: grid;
+    place-items: center;
+    flex-shrink: 0;
+  }
+  .result-check svg { width: 16px; height: 16px; }
+
+  .result-preview {
+    width: 100%;
+    max-height: 320px;
+    border-radius: 14px;
+    background: rgba(0, 0, 0, 0.3);
+    overflow: hidden;
+    margin-bottom: 18px;
+    display: grid;
+    place-items: center;
+  }
+  .result-preview img {
+    max-width: 100%;
+    max-height: 320px;
+    object-fit: contain;
+    display: block;
+  }
+
+  .url-row {
+    display: flex;
+    gap: 8px;
+    background: rgba(0, 0, 0, 0.35);
+    border: 1px solid rgba(232, 226, 212, 0.1);
+    border-radius: 12px;
+    padding: 6px;
+    margin-bottom: 14px;
+  }
+  .url-input {
+    flex: 1;
+    background: transparent;
+    border: none;
+    color: #e8e2d4;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    padding: 10px 12px;
+    direction: ltr;
+    text-align: left;
+    outline: none;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .url-input::selection { background: rgba(217, 164, 65, 0.4); }
+
+  .copy-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 10px 16px;
+    background: linear-gradient(135deg, #d9a441, #b8862a);
+    border: none;
+    border-radius: 8px;
+    color: #0a0a14;
+    font-family: inherit;
+    font-size: 12px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    flex-shrink: 0;
+    white-space: nowrap;
+  }
+  .copy-btn:hover { transform: translateY(-1px); box-shadow: 0 6px 16px rgba(217, 164, 65, 0.4); }
+  .copy-btn:active { transform: translateY(0) scale(0.98); }
+  .copy-btn.copied { background: linear-gradient(135deg, #6aab7a, #4a8b5a); }
+  .copy-btn svg { width: 14px; height: 14px; }
+
+  .result-actions {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+  .action-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 10px 16px;
+    background: rgba(232, 226, 212, 0.06);
+    border: 1px solid rgba(232, 226, 212, 0.1);
+    border-radius: 10px;
+    color: #e8e2d4;
+    font-family: inherit;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    text-decoration: none;
+  }
+  .action-btn:hover {
+    background: rgba(232, 226, 212, 0.1);
+    border-color: rgba(232, 226, 212, 0.2);
+    transform: translateY(-1px);
+  }
+  .action-btn.danger { color: #c9899e; }
+  .action-btn.danger:hover { background: rgba(201, 137, 158, 0.1); border-color: rgba(201, 137, 158, 0.3); }
+  .action-btn svg { width: 14px; height: 14px; }
+
+  /* ═══════ تاریخچه ═══════ */
+  .history-section {
+    margin-top: 48px;
+  }
+  .history-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 18px;
+    gap: 12px;
+  }
+  .history-title {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 15px;
+    font-weight: 800;
+    color: #e8e2d4;
+  }
+  .history-title .badge {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    padding: 2px 8px;
+    background: rgba(217, 164, 65, 0.15);
+    color: #d9a441;
+    border-radius: 100px;
+    font-weight: 500;
+    direction: ltr;
+  }
+  .clear-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 14px;
+    background: transparent;
+    border: 1px solid rgba(201, 137, 158, 0.25);
+    border-radius: 10px;
+    color: #c9899e;
+    font-family: inherit;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+  .clear-btn:hover {
+    background: rgba(201, 137, 158, 0.08);
+    border-color: rgba(201, 137, 158, 0.5);
+  }
+  .clear-btn svg { width: 13px; height: 13px; }
+
+  .history-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+    gap: 12px;
+  }
+  .history-item {
+    position: relative;
+    aspect-ratio: 1;
+    border-radius: 14px;
+    overflow: hidden;
+    background: rgba(20, 20, 32, 0.6);
+    border: 1px solid rgba(232, 226, 212, 0.08);
+    cursor: pointer;
+    transition: all 0.25s cubic-bezier(0.22, 0.61, 0.36, 1);
+    animation: fadeIn 0.4s ease;
+  }
+  @keyframes fadeIn {
+    from { opacity: 0; transform: scale(0.95); }
+    to { opacity: 1; transform: scale(1); }
+  }
+  .history-item:hover {
+    border-color: rgba(217, 164, 65, 0.4);
+    transform: translateY(-3px);
+    box-shadow: 0 10px 24px rgba(0, 0, 0, 0.3);
+  }
+  .history-item img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+  .history-item::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(180deg, transparent 50%, rgba(0, 0, 0, 0.8));
+    pointer-events: none;
+  }
+  .history-item-meta {
+    position: absolute;
+    bottom: 8px;
+    left: 8px;
+    right: 8px;
+    z-index: 2;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 6px;
+  }
+  .history-item-time {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    color: rgba(232, 226, 212, 0.6);
+    direction: ltr;
+  }
+  .history-item-copy {
+    width: 26px;
+    height: 26px;
+    border-radius: 50%;
+    background: rgba(217, 164, 65, 0.9);
+    color: #0a0a14;
+    display: grid;
+    place-items: center;
+    border: none;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    flex-shrink: 0;
+  }
+  .history-item-copy:hover { transform: scale(1.1); background: #f0c674; }
+  .history-item-copy svg { width: 12px; height: 12px; }
+
+  .empty-history {
+    text-align: center;
+    padding: 50px 20px;
+    color: rgba(232, 226, 212, 0.35);
+    font-size: 13px;
+  }
+  .empty-history svg {
+    width: 44px;
+    height: 44px;
+    margin: 0 auto 14px;
+    opacity: 0.4;
+    display: block;
+  }
+
+  /* ═══════ Toast ═══════ */
+  .toast {
+    position: fixed;
+    bottom: 30px;
+    left: 50%;
+    transform: translateX(-50%) translateY(80px);
+    padding: 12px 22px;
+    background: rgba(20, 20, 32, 0.95);
+    border: 1px solid rgba(217, 164, 65, 0.3);
+    border-radius: 100px;
+    color: #e8e2d4;
+    font-size: 13px;
+    font-weight: 600;
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.5);
+    z-index: 1000;
+    opacity: 0;
+    pointer-events: none;
+    transition: all 0.35s cubic-bezier(0.22, 0.61, 0.36, 1);
+    max-width: calc(100% - 32px);
+    text-align: center;
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+  }
+  .toast.show {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
+  .toast.error { border-color: rgba(201, 137, 158, 0.5); color: #f0b8c8; }
+
+  /* ═══════ فوتر ═══════ */
+  .footer {
+    max-width: 900px;
+    margin: 60px auto 0;
+    padding: 30px 20px 0;
+    border-top: 1px solid rgba(232, 226, 212, 0.08);
+    text-align: center;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.15em;
+    color: rgba(232, 226, 212, 0.35);
+    direction: ltr;
+  }
+  .footer a { color: rgba(217, 164, 65, 0.7); text-decoration: none; }
+  .footer a:hover { color: #d9a441; }
+
+  /* ═══════ Responsive ═══════ */
+  @media (max-width: 600px) {
+    .header { padding: 28px 16px 16px; }
+    .container { padding: 0 14px; }
+    .drop-zone { padding: 44px 20px; }
+    .drop-icon { width: 56px; height: 56px; }
+    .drop-icon svg { width: 26px; height: 26px; }
+    .drop-title { font-size: 16px; }
+    .drop-sub { font-size: 12px; }
+    .result-card { padding: 18px; }
+    .history-grid { grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); gap: 10px; }
+    .url-row { flex-direction: column; }
+    .copy-btn { justify-content: center; }
+    .progress-card { padding: 18px; }
+  }
+
+  /* ═══════ Reduced motion ═══════ */
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+      animation-duration: 0.01ms !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
+</style>
+</head>
+<body>
+
+<header class="header">
+  <div class="brand">
+    <span class="brand-mark">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+        <rect x="3" y="3" width="18" height="18" rx="4"/>
+        <circle cx="8.5" cy="9" r="1.5" fill="currentColor"/>
+        <path d="M21 15l-5-5L5 21"/>
+      </svg>
+    </span>
+    <span class="brand-text">FILEBIN</span>
+  </div>
+  <h1>آپلود تصویر، دریافت لینک مستقیم</h1>
+  <p>عکست رو بکش و رها کن — در چند ثانیه یه لینک دائمی می‌گیری که هرجا می‌تونی استفاده کنی.</p>
+</header>
+
+<main class="container">
+
+  <!-- منطقهٔ رهاسازی -->
+  <div class="uploader">
+    <div class="drop-zone" id="dropZone">
+      <div class="drop-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+          <path d="M17 8l-5-5-5 5"/>
+          <path d="M12 3v12"/>
+        </svg>
+      </div>
+      <div class="drop-title">عکس رو اینجا بکش و رها کن</div>
+      <div class="drop-sub">
+        یا کلیک کن تا از فایل‌ها انتخاب کنی<br>
+        همچنین می‌تونی با <kbd>Ctrl</kbd>+<kbd>V</kbd> مستقیم پیست کنی
+      </div>
+    </div>
+  </div>
+
+  <!-- کارت پیشرفت -->
+  <div class="progress-card" id="progressCard">
+    <div class="progress-head">
+      <img class="progress-thumb" id="progressThumb" alt="">
+      <div class="progress-info">
+        <div class="progress-name" id="progressName">—</div>
+        <div class="progress-size" id="progressSize">—</div>
+      </div>
+      <div class="progress-pct" id="progressPct">0%</div>
+    </div>
+    <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+    <div class="progress-status" id="progressStatus">در حال آماده‌سازی...</div>
+  </div>
+
+  <!-- نتیجه -->
+  <div class="result-card" id="resultCard">
+    <div class="result-header">
+      <span class="result-check">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M20 6L9 17l-5-5"/>
+        </svg>
+      </span>
+      <span>آپلود با موفقیت انجام شد</span>
+    </div>
+
+    <div class="result-preview">
+      <img id="resultImg" alt="">
+    </div>
+
+    <div class="url-row">
+      <input class="url-input" id="resultUrl" readonly value="">
+      <button class="copy-btn" id="copyBtn" type="button">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="9" y="9" width="13" height="13" rx="2"/>
+          <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>
+        </svg>
+        <span id="copyBtnText">کپی</span>
+      </button>
+    </div>
+
+    <div class="result-actions">
+      <a class="action-btn" id="openBtn" href="#" target="_blank" rel="noopener">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/>
+          <path d="M15 3h6v6"/>
+          <path d="M10 14L21 3"/>
+        </svg>
+        باز کردن
+      </a>
+      <button class="action-btn" id="downloadBtn" type="button">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+          <path d="M7 10l5 5 5-5"/>
+          <path d="M12 15V3"/>
+        </svg>
+        دانلود
+      </button>
+      <button class="action-btn" id="shareBtn" type="button">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="18" cy="5" r="3"/>
+          <circle cx="6" cy="12" r="3"/>
+          <circle cx="18" cy="19" r="3"/>
+          <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/>
+          <line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/>
+        </svg>
+        اشتراک‌گذاری
+      </button>
+      <button class="action-btn danger" id="newUploadBtn" type="button">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M12 5v14M5 12h14"/>
+        </svg>
+        آپلود جدید
+      </button>
+    </div>
+  </div>
+
+  <!-- تاریخچه -->
+  <section class="history-section">
+    <div class="history-head">
+      <div class="history-title">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:18px;height:18px;color:#d9a441;">
+          <circle cx="12" cy="12" r="10"/>
+          <polyline points="12 6 12 12 16 14"/>
+        </svg>
+        <span>آپلودهای اخیر</span>
+        <span class="badge" id="historyCount">0</span>
+      </div>
+      <button class="clear-btn" id="clearHistoryBtn" type="button">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M3 6h18M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/>
+        </svg>
+        پاک کردن
+      </button>
+    </div>
+    <div class="history-grid" id="historyGrid">
+      <div class="empty-history" id="emptyHistory" style="grid-column: 1 / -1;">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="3" y="3" width="18" height="18" rx="3"/>
+          <circle cx="8.5" cy="9" r="1.5"/>
+          <path d="M21 15l-5-5L5 21"/>
+        </svg>
+        هنوز چیزی آپلود نکردی
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer class="footer">
+  <p>Powered by <a href="https://catbox.moe" target="_blank" rel="noopener">CATBOX.MOE</a> · Files up to 200MB · Permanent links</p>
+</footer>
+
+<div class="toast" id="toast"></div>
+
+<input type="file" id="fileInput" accept="image/*" multiple hidden>
+
+<script>
+(function () {
+  'use strict';
+
+  /* ═══════════════════════════════════════════════════════
+     ابزارها
+     ═══════════════════════════════════════════════════════ */
+  const $ = (s) => document.querySelector(s);
+  const $$ = (s) => Array.from(document.querySelectorAll(s));
+
+  const MAX_SIZE = 200 * 1024 * 1024;      /* ۲۰۰ مگابایت */
+  const HISTORY_KEY = 'filebin.history.v1';
+  const MAX_HISTORY = 24;
+
+  function formatBytes(bytes) {
+    if (bytes < 1024) return bytes + ' B';
+    if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + ' KB';
+    return (bytes / (1024 * 1024)).toFixed(2) + ' MB';
+  }
+
+  function timeAgo(ts) {
+    const d = (Date.now() - ts) / 1000;
+    if (d < 60) return 'الان';
+    if (d < 3600) return Math.floor(d / 60) + 'د';
+    if (d < 86400) return Math.floor(d / 3600) + 'س';
+    if (d < 604800) return Math.floor(d / 86400) + 'ر';
+    return new Date(ts).toLocaleDateString('fa-IR');
+  }
+
+  /* ═══════════════════════════════════════════════════════
+     Toast
+     ═══════════════════════════════════════════════════════ */
+  let toastTimer;
+  function toast(msg, isError) {
+    const el = $('#toast');
+    el.textContent = msg;
+    el.classList.toggle('error', !!isError);
+    el.classList.add('show');
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => el.classList.remove('show'), 2400);
+  }
+
+  /* ═══════════════════════════════════════════════════════
+     تاریخچه (localStorage)
+     ═══════════════════════════════════════════════════════ */
+  function loadHistory() {
+    try {
+      const raw = localStorage.getItem(HISTORY_KEY);
+      return raw ? JSON.parse(raw) : [];
+    } catch (e) { return []; }
+  }
+
+  function saveHistory(list) {
+    try { localStorage.setItem(HISTORY_KEY, JSON.stringify(list)); } catch (e) {}
+  }
+
+  function addToHistory(item) {
+    const list = loadHistory();
+    list.unshift(item);
+    while (list.length > MAX_HISTORY) list.pop();
+    saveHistory(list);
+    renderHistory();
+  }
+
+  function clearHistory() {
+    if (!confirm('همه آپلودهای اخیر پاک بشن؟ (فایل‌ها روی سرور باقی می‌مونن)')) return;
+    saveHistory([]);
+    renderHistory();
+    toast('تاریخچه پاک شد');
+  }
+
+  function renderHistory() {
+    const list = loadHistory();
+    const grid = $('#historyGrid');
+    const empty = $('#emptyHistory');
+    const count = $('#historyCount');
+
+    count.textContent = list.length;
+
+    /* حذف موارد قدیمی */
+    $$('.history-item').forEach(n => n.remove());
+
+    if (!list.length) {
+      if (empty) empty.style.display = 'block';
+      return;
+    }
+    if (empty) empty.style.display = 'none';
+
+    list.forEach(item => {
+      const el = document.createElement('div');
+      el.className = 'history-item';
+      el.innerHTML =
+        '<img src="' + item.url + '" alt="" loading="lazy" decoding="async">' +
+        '<div class="history-item-meta">' +
+          '<span class="history-item-time">' + timeAgo(item.ts) + '</span>' +
+          '<button class="history-item-copy" type="button" title="کپی لینک">' +
+            '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">' +
+              '<rect x="9" y="9" width="13" height="13" rx="2"/>' +
+              '<path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>' +
+            '</svg>' +
+          '</button>' +
+        '</div>';
+
+      /* کلیک روی تصویر = کپی لینک */
+      el.addEventListener('click', (e) => {
+        if (e.target.closest('.history-item-copy')) return;
+        copyToClipboard(item.url);
+      });
+
+      /* کلیک روی دکمهٔ کپی */
+      el.querySelector('.history-item-copy').addEventListener('click', (e) => {
+        e.stopPropagation();
+        copyToClipboard(item.url);
+      });
+
+      grid.appendChild(el);
+    });
+  }
+
+  /* ═══════════════════════════════════════════════════════
+     کپی به کلیپ‌بورد
+     ═══════════════════════════════════════════════════════ */
+  async function copyToClipboard(text) {
+    try {
+      if (navigator.clipboard && window.isSecureContext) {
+        await navigator.clipboard.writeText(text);
+      } else {
+        /* fallback */
+        const ta = document.createElement('textarea');
+        ta.value = text;
+        ta.style.position = 'fixed';
+        ta.style.opacity = '0';
+        document.body.appendChild(ta);
+        ta.select();
+        document.execCommand('copy');
+        document.body.removeChild(ta);
+      }
+      return true;
+    } catch (e) { return false; }
+  }
+
+  /* ═══════════════════════════════════════════════════════
+     آپلود به Catbox
+     ═══════════════════════════════════════════════════════ */
+  function uploadFile(file, onProgress) {
+    return new Promise((resolve, reject) => {
+      if (!file.type.startsWith('image/')) {
+        reject(new Error('فقط فایل تصویری مجازه'));
+        return;
+      }
+      if (file.size > MAX_SIZE) {
+        reject(new Error('حجم فایل بیشتر از ۲۰۰ مگابایته'));
+        return;
+      }
+
+      const fd = new FormData();
+      fd.append('reqtype', 'fileupload');
+      fd.append('fileToUpload', file);
+
+      const xhr = new XMLHttpRequest();
+      xhr.open('POST', 'https://catbox.moe/user/api.php', true);
+
+      xhr.upload.addEventListener('progress', (e) => {
+        if (e.lengthComputable) {
+          onProgress(e.loaded / e.total);
+        }
+      });
+
+      xhr.addEventListener('load', () => {
+        if (xhr.status >= 200 && xhr.status < 300) {
+          const url = xhr.responseText.trim();
+          if (url.startsWith('https://')) resolve(url);
+          else reject(new Error('پاسخ نامعتبر از سرور: ' + url.slice(0, 100)));
+        } else {
+          reject(new Error('خطای سرور (' + xhr.status + ')'));
+        }
+      });
+
+      xhr.addEventListener('error', () => {
+        reject(new Error('اتصال به سرور برقرار نشد'));
+      });
+
+      xhr.addEventListener('timeout', () => {
+        reject(new Error('زمان آپلود تموم شد'));
+      });
+
+      xhr.send(fd);
+    });
+  }
+
+  /* ═══════════════════════════════════════════════════════
+     مدیریت آپلود
+     ═══════════════════════════════════════════════════════ */
+  let isUploading = false;
+
+  async function handleFiles(files) {
+    if (isUploading) { toast('یک آپلود در جریانه'); return; }
+    if (!files || !files.length) return;
+
+    const file = files[0];
+
+    /* پیش‌نمایش */
+    const thumbUrl = URL.createObjectURL(file);
+    $('#progressThumb').src = thumbUrl;
+    $('#progressName').textContent = file.name;
+    $('#progressSize').textContent = formatBytes(file.size);
+    $('#progressFill').style.width = '0%';
+    $('#progressPct').textContent = '0%';
+    $('#progressStatus').textContent = 'در حال آماده‌سازی...';
+
+    $('#progressCard').classList.add('on');
+    $('#resultCard').classList.remove('on');
+
+    isUploading = true;
+
+    try {
+      const url = await uploadFile(file, (p) => {
+        const pct = Math.round(p * 100);
+        $('#progressFill').style.width = pct + '%';
+        $('#progressPct').textContent = pct + '%';
+        if (pct < 100) $('#progressStatus').textContent = 'در حال آپلود...';
+        else $('#progressStatus').textContent = 'در حال پردازش...';
+      });
+
+      URL.revokeObjectURL(thumbUrl);
+
+      /* نمایش نتیجه */
+      $('#resultImg').src = url;
+      $('#resultUrl').value = url;
+      $('#openBtn').href = url;
+      $('#progressStatus').textContent = 'کامل شد ✓';
+
+      setTimeout(() => {
+        $('#progressCard').classList.remove('on');
+        $('#resultCard').classList.add('on');
+      }, 500);
+
+      /* ذخیره در تاریخچه */
+      addToHistory({
+        url: url,
+        name: file.name,
+        size: file.size,
+        ts: Date.now()
+      });
+
+      toast('لینک آماده شد ✓');
+
+      /* اسکرول به نتیجه */
+      setTimeout(() => {
+        $('#resultCard').scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }, 100);
+
+    } catch (err) {
+      URL.revokeObjectURL(thumbUrl);
+      $('#progressCard').classList.remove('on');
+      toast(err.message || 'آپلود ناموفق بود', true);
+    } finally {
+      isUploading = false;
+    }
+  }
+
+  /* ═══════════════════════════════════════════════════════
+     Drag & Drop
+     ═══════════════════════════════════════════════════════ */
+  const dropZone = $('#dropZone');
+  const fileInput = $('#fileInput');
+
+  dropZone.addEventListener('click', () => fileInput.click());
+
+  fileInput.addEventListener('change', (e) => {
+    if (e.target.files && e.target.files.length) {
+      handleFiles(e.target.files);
+      fileInput.value = ''; /* reset برای آپلود بعدی */
+    }
+  });
+
+  /* جلوگیری از رفتار پیش‌فرض روی کل صفحه */
+  ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(evt => {
+    document.addEventListener(evt, (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+    });
+  });
+
+  /* فعال شدن کلاس dragover روی dropzone */
+  let dragCounter = 0;
+  dropZone.addEventListener('dragenter', (e) => {
+    dragCounter++;
+    dropZone.classList.add('dragover');
+  });
+  dropZone.addEventListener('dragleave', (e) => {
+    dragCounter--;
+    if (dragCounter === 0) dropZone.classList.remove('dragover');
+  });
+  dropZone.addEventListener('drop', (e) => {
+    dragCounter = 0;
+    dropZone.classList.remove('dragover');
+    if (e.dataTransfer && e.dataTransfer.files && e.dataTransfer.files.length) {
+      handleFiles(e.dataTransfer.files);
+    }
+  });
+
+  /* ═══════════════════════════════════════════════════════
+     Paste از کلیپ‌بورد
+     ═══════════════════════════════════════════════════════ */
+  document.addEventListener('paste', (e) => {
+    const items = (e.clipboardData && e.clipboardData.items) || [];
+    for (let i = 0; i < items.length; i++) {
+      if (items[i].type.indexOf('image') !== -1) {
+        const file = items[i].getAsFile();
+        if (file) {
+          handleFiles([file]);
+          return;
+        }
+      }
+    }
+  });
+
+  /* ═══════════════════════════════════════════════════════
+     دکمه‌های نتیجه
+     ═══════════════════════════════════════════════════════ */
+  $('#copyBtn').addEventListener('click', async () => {
+    const url = $('#resultUrl').value;
+    if (!url) return;
+    const ok = await copyToClipboard(url);
+    if (ok) {
+      const btn = $('#copyBtn');
+      const txt = $('#copyBtnText');
+      btn.classList.add('copied');
+      txt.textContent = 'کپی شد';
+      toast('لینک کپی شد ✓');
+      setTimeout(() => {
+        btn.classList.remove('copied');
+        txt.textContent = 'کپی';
+      }, 1800);
+    } else {
+      toast('کپی نشد — دستی انتخاب کن', true);
+      $('#resultUrl').select();
+    }
+  });
+
+  $('#downloadBtn').addEventListener('click', () => {
+    const url = $('#resultUrl').value;
+    if (!url) return;
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = '';
+    a.target = '_blank';
+    a.rel = 'noopener';
+    a.click();
+  });
+
+  $('#shareBtn').addEventListener('click', async () => {
+    const url = $('#resultUrl').value;
+    if (!url) return;
+    if (navigator.share) {
+      try {
+        await navigator.share({ url: url, title: 'تصویر آپلودشده' });
+      } catch (e) { /* لغو شده */ }
+    } else {
+      const ok = await copyToClipboard(url);
+      if (ok) toast('لینک کپی شد — بفرستش برای هرکسی');
+      else toast('اشتراک‌گذاری پشتیبانی نمی‌شه', true);
+    }
+  });
+
+  $('#newUploadBtn').addEventListener('click', () => {
+    $('#resultCard').classList.remove('on');
+    $('#progressCard').classList.remove('on');
+    fileInput.click();
+  });
+
+  /* ═══════════════════════════════════════════════════════
+     پاک کردن تاریخچه
+     ═══════════════════════════════════════════════════════ */
+  $('#clearHistoryBtn').addEventListener('click', clearHistory);
+
+  /* ═══════════════════════════════════════════════════════
+     راه‌اندازی
+     ═══════════════════════════════════════════════════════ */
+  renderHistory();
+  console.log('%c📦 FileBin', 'color:#d9a441;font-size:14px;font-weight:bold', '— آماده');
+
+})();
+</script>
+</body>
+  </html>
